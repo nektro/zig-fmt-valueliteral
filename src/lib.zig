@@ -25,9 +25,8 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
             inline for (v.fields) |sf, j| {
                 try w.print(".{s} = ", .{sf.name});
                 try fmtValueLiteral(w, @field(value, sf.name), print_type_name);
-                try w.writeAll(",");
-                if (j < v.fields.len) {
-                    try w.writeAll(" ");
+                if (j < v.fields.len - 1) {
+                    try w.writeAll(", ");
                 }
             }
             try w.writeAll("}");
