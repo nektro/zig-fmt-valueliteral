@@ -57,6 +57,10 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
                 try w.writeAll("null");
             }
         },
+        .Enum => {
+            try w.writeAll(".");
+            try w.writeAll(@tagName(value));
+        },
         else => {
             @compileError(@tagName(TI) ++ " " ++ @typeName(TO));
         },
