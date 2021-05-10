@@ -8,6 +8,9 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
         return;
     }
     if (comptime std.meta.trait.isIndexable(TO)) {
+        if (comptime std.meta.trait.isSlice(TO)) {
+            try w.writeAll("&");
+        }
         try w.writeAll(".{");
         for (value) |item, i| {
             try fmtValueLiteral(w, item, print_type_name);
