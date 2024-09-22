@@ -1,14 +1,15 @@
 const std = @import("std");
+const extras = @import("extras");
 
 pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void {
     const TO = @TypeOf(value);
     const TI = @typeInfo(TO);
-    if (comptime std.meta.trait.isZigString(TO)) {
+    if (comptime extras.isZigString(TO)) {
         try w.print("\"{}\"", .{std.zig.fmtEscapes(value)});
         return;
     }
-    if (comptime std.meta.trait.isIndexable(TO)) {
-        if (comptime std.meta.trait.isSlice(TO)) {
+    if (comptime extras.isIndexable(TO)) {
+        if (comptime extras.isSlice(TO)) {
             try w.writeAll("&");
         }
         try w.writeAll(".{");
