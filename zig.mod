@@ -5,3 +5,5 @@ license: MIT
 description: Print a value to a writer as it would be written in Zig syntax as a (x) literal.
 dependencies:
   - src: git https://github.com/nektro/zig-extras
+root_dependencies:
+  - src: git https://github.com/nektro/zig-expect
