@@ -23,7 +23,7 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
         return;
     }
     switch (TI) {
-        .Struct => |v| {
+        .@"struct" => |v| {
             try w.writeAll(if (print_type_name) @typeName(TO) else ".");
             try w.writeAll("{");
             inline for (v.fields, 0..) |sf, j| {
@@ -35,10 +35,10 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
             }
             try w.writeAll("}");
         },
-        .Int, .ComptimeInt => {
+        .int, .comptime_int => {
             try w.print("{d}", .{value});
         },
-        .Union => |v| {
+        .@"union" => |v| {
             try w.writeAll(if (print_type_name) @typeName(TO) else ".");
             const UnionTagType = v.tag_type.?;
             try w.writeAll("{ .");
@@ -51,63 +51,63 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
             }
             try w.writeAll(" }");
         },
-        .Void => {
+        .void => {
             try w.writeAll("{}");
         },
-        .Optional => |_| {
+        .optional => |_| {
             if (value) |cap| {
                 try fmtValueLiteral(w, cap, print_type_name);
             } else {
                 try w.writeAll("null");
             }
         },
-        .Enum, .EnumLiteral => {
+        .@"enum", .enum_literal => {
             try w.writeAll(".");
             try w.writeAll(@tagName(value));
         },
-        .Type => {
+        .type => {
             try w.writeAll(@typeName(value));
         },
-        .Bool => {
+        .bool => {
             try w.writeAll(if (value) "true" else "false");
         },
-        .NoReturn => {
+        .noreturn => {
             comptime unreachable;
         },
-        .Float, .ComptimeFloat => {
+        .float, .comptime_float => {
             try w.print("{d}", .{value});
         },
-        .Pointer => {
+        .pointer => {
             comptime unreachable;
         },
-        .Array => {
+        .array => {
             comptime unreachable;
         },
-        .Undefined => {
+        .undefined => {
             try w.writeAll("undefined");
         },
-        .Null => {
+        .null => {
             try w.writeAll("null");
         },
-        .ErrorUnion => {
+        .error_union => {
             comptime unreachable;
         },
-        .ErrorSet => {
+        .error_set => {
             comptime unreachable;
         },
-        .Fn => {
+        .@"fn" => {
             comptime unreachable;
         },
-        .Opaque => {
+        .@"opaque" => {
             comptime unreachable;
         },
-        .Frame => {
+        .frame => {
             comptime unreachable;
         },
-        .AnyFrame => {
+        .@"anyframe" => {
             comptime unreachable;
         },
-        .Vector => {
+        .vector => {
             comptime unreachable;
         },
     }
