@@ -5,7 +5,7 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
     const TO = @TypeOf(value);
     const TI = @typeInfo(TO);
     if (comptime extras.isZigString(TO)) {
-        try w.print("\"{}\"", .{std.zig.fmtEscapes(value)});
+        try w.print("\"{}\"", .{altStringEscape(value)});
         return;
     }
     if (comptime extras.isIndexable(TO)) {
@@ -112,3 +112,25 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
         },
     }
 }
+
+pub fn altStringEscape(data: []const u8) StringEscape {
+    return .{ .data = data };
+}
+const StringEscape = struct {
+    data: []const u8,
+
+    pub fn nprint(self: StringEscape, writer: anytype) !void {
+        for (self.data) |c| switch (c) {
+            '\n' => try writer.writeAll("\\n"),
+            '\r' => try writer.writeAll("\\r"),
+            '\t' => try writer.writeAll("\\t"),
+            '\\' => try writer.writeAll("\\\\"),
+            '"' => try writer.writeAll("\\\""),
+            '\'' => try writer.writeAll(&.{'\''}),
+            ' ', '!', '#'...'&', '('...'[', ']'...'~' => try writer.writeAll(&.{c}),
+            else => {
+                try writer.print("\\x{x:0>2}", .{c});
+            },
+        };
+    }
+};
