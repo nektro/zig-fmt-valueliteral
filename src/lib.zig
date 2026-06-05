@@ -54,7 +54,7 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
         .void => {
             try w.writeAll("{}");
         },
-        .optional => |_| {
+        .optional => {
             if (value) |cap| {
                 try fmtValueLiteral(w, cap, print_type_name);
             } else {
