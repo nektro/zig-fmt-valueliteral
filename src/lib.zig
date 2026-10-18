@@ -26,10 +26,10 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
         .@"struct" => |v| {
             try w.writeAll(if (print_type_name) @typeName(TO) else ".");
             try w.writeAll("{");
-            inline for (v.fields, 0..) |sf, j| {
-                try w.print(".{s} = ", .{sf.name});
-                try fmtValueLiteral(w, @field(value, sf.name), print_type_name);
-                if (j < v.fields.len - 1) {
+            inline for (v.field_names, 0..) |sf, j| {
+                try w.print(".{s} = ", .{sf});
+                try fmtValueLiteral(w, @field(value, sf), print_type_name);
+                if (j < v.field_names.len - 1) {
                     try w.writeAll(", ");
                 }
             }
@@ -44,9 +44,9 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
             try w.writeAll("{ .");
             try w.writeAll(@tagName(@as(UnionTagType, value)));
             try w.writeAll(" = ");
-            inline for (v.fields) |u_field| {
-                if (value == @field(UnionTagType, u_field.name)) {
-                    try fmtValueLiteral(w, @field(value, u_field.name), print_type_name);
+            inline for (v.field_names) |u_field| {
+                if (value == @field(UnionTagType, u_field)) {
+                    try fmtValueLiteral(w, @field(value, u_field), print_type_name);
                 }
             }
             try w.writeAll(" }");
@@ -108,6 +108,9 @@ pub fn fmtValueLiteral(w: anytype, value: anytype, print_type_name: bool) !void 
             comptime unreachable;
         },
         .vector => {
+            comptime unreachable;
+        },
+        .spirv => {
             comptime unreachable;
         },
     }
